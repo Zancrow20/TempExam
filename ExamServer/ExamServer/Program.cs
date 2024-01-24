@@ -9,10 +9,11 @@ builder.Services.AddHostedService<DbContextMigration>();
 builder.Services
     .AddApplicationDb(builder.Configuration.GetConnectionString("DefaultConnection"))
     .AddJWTAuthorization(config)
-    .AddMediatr();
+    .AddMediatr()
+    .AddSwagger();
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
 
 var app = builder.Build();
 
