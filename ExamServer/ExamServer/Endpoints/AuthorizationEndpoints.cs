@@ -21,7 +21,9 @@ public class AuthorizationEndpoints
                 };
                 var result = await mediator.Send(command);
                 return result.Match(Results.Ok, Results.BadRequest);
-            });
+            })
+            .Produces<string>()
+            .Produces<string>(400);
         
         routeGroup.MapPost("/login", 
             async ([FromServices] IMediator mediator, [FromBody] Login form) =>
@@ -29,6 +31,8 @@ public class AuthorizationEndpoints
                 var query = new LoginQuery() {Username = form.Username, Password = form.Password};
                 var result = await mediator.Send(query);
                 return result.Match(Results.Ok, Results.BadRequest);
-            });
+            })
+            .Produces<UserInfoDto>()
+            .Produces<string>(400);
     }
 }

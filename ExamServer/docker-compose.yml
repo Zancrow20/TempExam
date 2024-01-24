@@ -6,11 +6,11 @@
       context: .
       dockerfile: ExamServer/Dockerfile
     ports:
-      - "5000:80"
+      - "8000:80"
     depends_on:
       - dotnet_postgres
     environment:
-      ConnectionStrings__Default : Server=dotnet_postgres;Port=5432;Database=dotnet_postgres_db;User Id=superCoolUserName;Password=superCoolUserPassword138;
+      ConnectionStrings__DefaultConnection : Server=dotnet_postgres;Port=5432;Database=dotnet_postgres_db;User Id=superCoolUserName;Password=superCoolUserPassword138;
     
   dotnet_postgres:
     image: postgres:alpine

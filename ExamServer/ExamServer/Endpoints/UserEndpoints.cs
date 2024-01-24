@@ -1,6 +1,7 @@
 using Contracts;
 using ExamServer.Features.Authorization.Login;
 using ExamServer.Features.Authorization.Register;
+using ExamServer.Features.Shared;
 using ExamServer.Features.User;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -19,7 +20,8 @@ public class UserEndpoints
             var query = new UserQuery(){Username = username};
             var result = await mediator.Send(query);
             return result.Match(Results.Ok, Results.BadRequest);
-        });
+        }).Produces<UserDto>()
+            .Produces<string>(400);
         
         routeGroup.MapGet("", async (HttpContext context, [FromServices] IMediator mediator) =>
         {
@@ -27,7 +29,8 @@ public class UserEndpoints
             var query = new UserQuery(){Username = username};
             var result = await mediator.Send(query);
             return result.Match(Results.Ok, Results.BadRequest);
-        });
+        }).Produces<UserDto>()
+            .Produces<string>(400);
 
         //app.MapGet("/", () => "Hello world").RequireAuthorization();
     }
