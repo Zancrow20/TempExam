@@ -1,35 +1,51 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { getFetcher } from "../axios/AxiosInstance";
 
+const fetcher = getFetcher(7290);
 export const RegistrationForm = () => {
     const navigate = useNavigate();
     const [credentials, setCredentials] = useState({
         username: "",
         password: "",
-        repeatpassword: ""
+        confirmPassword: ""
     });
     const updateCredentials = (name, value) => {
-        credentials[name] = value;
+        credentials[name] = value.trim();
         setCredentials({ ...credentials });
       };
     const [error, setError] = useState();
+
+    const handleSubmitForm = (event) => {
+        event.preventDefault();
+        setError("");
+    
+        fetcher
+          .post("auth/register", credentials)
+          .then((res) => navigate("/authorize"))
+          .catch((err) => setError(err.response.data));
+      };
     return (
         <>
-            <input
-              type="text"
-              placeholder="User name"
-              onChange={(e) => updateCredentials("username", e.target.value.trim())}
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              onChange={(e) => updateCredentials("password", e.target.value.trim())}
-            />
-            <input
-              type="password"
-              placeholder="Repeat password"
-              onChange={(e) => updateCredentials("password", e.target.value.trim())}
-            />
+            <form onSubmit={handleSubmitForm}>
+                <input
+                type="text"
+                placeholder="User name"
+                onChange={(e) => updateCredentials("username", e.target.value)}
+                />
+                <input
+                type="password"
+                placeholder="Password"
+                onChange={(e) => updateCredentials("password", e.target.value)}
+                />
+                <input
+                type="password"
+                placeholder="Repeat password"
+                onChange={(e) => updateCredentials("confirmPassword", e.target.value)}
+                />
+                <input type="submit" value="OK" />
+                <div>{error}</div>
+            </form> 
         </>
     )
 
