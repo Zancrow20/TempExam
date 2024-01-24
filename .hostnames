@@ -1,0 +1,4 @@
+ExamServerPortHttps=7290
+ExamServerPortHttp=8000
+
+REACT_APP_ExamServer=${ExamServerPortHttp}

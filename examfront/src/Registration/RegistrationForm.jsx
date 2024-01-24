@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getFetcher } from "../axios/AxiosInstance";
+import Ports from "../consts/Ports";
 
-const fetcher = getFetcher(7290);
+const fetcher = getFetcher(Ports.ExamServer);
 export const RegistrationForm = () => {
     const navigate = useNavigate();
     const [credentials, setCredentials] = useState({
@@ -23,7 +24,14 @@ export const RegistrationForm = () => {
         fetcher
           .post("auth/register", credentials)
           .then((res) => navigate("/authorize"))
-          .catch((err) => setError(err.response.data));
+          .catch((err) => handleError(err));
+      };
+      const handleError = (err) => {
+        if (err && err.response && err.response.data) {
+            setError(err.response.data);
+            return;
+        }
+        setError(err.message);
       };
     return (
         <>

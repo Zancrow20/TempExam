@@ -3,8 +3,10 @@
     image: exam_server
     container_name: exam_server
     build:
-      context: .
+      context: ./ExamServer
       dockerfile: ExamServer/Dockerfile
+    env_file:
+      - .hostnames
     ports:
       - "8000:80"
     depends_on:
@@ -22,3 +24,16 @@
       POSTGRES_PASSWORD : superCoolUserPassword138
     ports:
       - '5450:5432'
+        
+  examfront:
+    image: exam_front
+    container_name: exam_front 
+    build:
+      context: ./examfront
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - .hostnames
+    depends_on:
+      - examserver
