@@ -3,7 +3,6 @@ using System.Security.Claims;
 using System.Text;
 using Domain.Entities;
 using Microsoft.IdentityModel.Tokens;
-using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
 namespace ExamServer.Services;
 
@@ -15,28 +14,27 @@ public interface IJwtGenerator
 public class JwtGenerator : IJwtGenerator
 {
     private readonly SymmetricSecurityKey _key;
+    private readonly string Audience;
+    private readonly string Issuer;
 
     public JwtGenerator(IConfiguration config)
     {
-        _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]));
+        Issuer = config["JwtSettings:Issuer"];
+        Audience = config["JwtSettings:Audience"];
+        _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JwtSettings:Key"]));
     }
     
     public string GenerateToken(User user)
     {
-        var claims = new List<Claim>{ new(JwtRegisteredClaimNames.NameId, user.UserName!) };
+        var claims = new List<Claim> {new(ClaimTypes.Name, user.UserName!) };
 
-        var credentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
-
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.Now.AddDays(7),
-            SigningCredentials = credentials
-        };
-        var tokenHandler = new JwtSecurityTokenHandler();
-
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-
-        return tokenHandler.WriteToken(token);        
+        var jwt = new JwtSecurityToken(
+            issuer: Issuer,
+            audience: Audience,
+            claims: claims,
+            expires: DateTime.UtcNow.Add(TimeSpan.FromMinutes(2)),
+            signingCredentials: new SigningCredentials(_key, SecurityAlgorithms.HmacSha256));
+            
+        return new JwtSecurityTokenHandler().WriteToken(jwt);
     }
 }

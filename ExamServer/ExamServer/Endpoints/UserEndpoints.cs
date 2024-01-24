@@ -1,6 +1,9 @@
 using Contracts;
-using ExamServer.Features.Login;
+using ExamServer.Features.Authorization.Login;
+using ExamServer.Features.Authorization.Register;
+using ExamServer.Features.User;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExamServer.Endpoints;
@@ -9,23 +12,23 @@ public class UserEndpoints
 {
     public static void Map(WebApplication app)
     {
-        app.MapPost("/user/login", async (HttpContext context, [FromServices] IMediator mediator, [FromForm] Login form) =>
+        var routeGroup = app.MapGroup("/user").RequireAuthorization();
+
+        routeGroup.MapGet("/{username}", async ([FromServices] IMediator mediator, string username) =>
         {
-            var query = new LoginQuery() { Username = form.Username, Password = form.Password};
+            var query = new UserQuery(){Username = username};
             var result = await mediator.Send(query);
-            return result.Match(success: Results.Ok, Results.BadRequest);
+            return result.Match(Results.Ok, Results.BadRequest);
+        });
+        
+        routeGroup.MapGet("", async (HttpContext context, [FromServices] IMediator mediator) =>
+        {
+            var username = context.User.Identity.Name;
+            var query = new UserQuery(){Username = username};
+            var result = await mediator.Send(query);
+            return result.Match(Results.Ok, Results.BadRequest);
         });
 
-        app.MapGet("/user/{username}", async (HttpContext context, [FromServices] IMediator mediator, string username) =>
-        {
-            
-        }).RequireAuthorization();
-        
-        app.MapGet("/user", async (HttpContext context, [FromServices] IMediator mediator) =>
-        {
-            
-        }).RequireAuthorization();
-
-        app.MapGet("/", () => "Hello world");
+        //app.MapGet("/", () => "Hello world").RequireAuthorization();
     }
 }

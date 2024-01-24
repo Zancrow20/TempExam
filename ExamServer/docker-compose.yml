@@ -10,7 +10,7 @@
     depends_on:
       - dotnet_postgres
     environment:
-      ConnectionStrings__Default : Host=dotnet_postgres;Port=5432;Database=dotnet_postgres_db;Username=superCoolUserName;Password=superCoolUserPassword138;
+      ConnectionStrings__Default : Server=dotnet_postgres;Port=5432;Database=dotnet_postgres_db;User Id=superCoolUserName;Password=superCoolUserPassword138;
     
   dotnet_postgres:
     image: postgres:alpine
@@ -21,4 +21,4 @@
       POSTGRES_USER : superCoolUserName
       POSTGRES_PASSWORD : superCoolUserPassword138
     ports:
-      - '5432:5432'
+      - '5450:5432'

@@ -52,7 +52,7 @@ public static class ApplicationServicesExtensions
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JwtSettings:Key"]!)),
                     ValidateIssuer = true,
                     ValidateAudience = true,
-                    //ValidateLifetime = true, //Todo надо ли это и нужно ли делать refresh для этого?
+                    ValidateLifetime = true, //Todo надо ли это и нужно ли делать refresh для этого?
                     ValidateIssuerSigningKey = true
                 };
             });

@@ -1,4 +1,4 @@
-﻿namespace Contracts;
+﻿namespace ExamServer.Features.Authorization.Login;
 
 public class UserInfoDto
 {

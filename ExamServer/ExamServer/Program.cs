@@ -5,8 +5,7 @@ using ExamServer.HostedServices;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
-//builder.Services.AddHostedService<DbContextMigration>();
-
+builder.Services.AddHostedService<DbContextMigration>();
 builder.Services
     .AddApplicationDb(builder.Configuration.GetConnectionString("DefaultConnection"))
     .AddJWTAuthorization(config)
@@ -27,9 +26,9 @@ if (app.Environment.IsDevelopment())
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapIdentityApi<User>();
-
 UserEndpoints.Map(app);
+AuthorizationEndpoints.Map(app);
+RatingEndpoints.Map(app);
 
 app.UseHttpsRedirection();
 

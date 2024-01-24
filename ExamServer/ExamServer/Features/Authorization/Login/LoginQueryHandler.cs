@@ -1,32 +1,30 @@
-using System.Net;
 using Contracts;
-using Domain.Entities;
 using ExamServer.Services;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
-namespace ExamServer.Features.Login;
+namespace ExamServer.Features.Authorization.Login;
 
-public class LoginQueryHandler : IRequestHandler<LoginQuery, Result<UserInfoDto, int>>
+public class LoginQueryHandler : IRequestHandler<LoginQuery, Result<UserInfoDto, string>>
 {
-    private readonly UserManager<User> _userManager;
-    private readonly SignInManager<User> _signInManager;
+    private readonly UserManager<Domain.Entities.User> _userManager;
+    private readonly SignInManager<Domain.Entities.User> _signInManager;
     private readonly IJwtGenerator _jwtGenerator;
 
-    public LoginQueryHandler(UserManager<User> userManager,  
-    SignInManager<User> signInManager, IJwtGenerator jwtGenerator)
+    public LoginQueryHandler(UserManager<Domain.Entities.User> userManager,  
+    SignInManager<Domain.Entities.User> signInManager, IJwtGenerator jwtGenerator)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _jwtGenerator = jwtGenerator;
     }
     
-    public async Task<Result<UserInfoDto, int>> Handle(LoginQuery request, CancellationToken cancellationToken)
+    public async Task<Result<UserInfoDto, string>> Handle(LoginQuery request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByNameAsync(request.Username);
         if (user == null)
         {
-            return int.Parse(HttpStatusCode.Unauthorized.ToString());
+            return "User doesn't exists!";
         }
         
         var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
@@ -41,6 +39,6 @@ public class LoginQueryHandler : IRequestHandler<LoginQuery, Result<UserInfoDto,
             };
         }
 
-        return int.Parse(HttpStatusCode.Unauthorized.ToString());
+        return "User doesn't exists!";
     }
 }
