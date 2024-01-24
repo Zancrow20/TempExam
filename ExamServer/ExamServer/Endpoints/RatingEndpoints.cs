@@ -17,6 +17,8 @@ public class RatingEndpoints
             var query = new RatingQuery() {PageSize = pageSize, StartIndex = startIndex};
             var result = await mediator.Send(query);
             return result.Match(Results.Ok, Results.BadRequest);
-        });
+        })
+        .Produces<RatingDto>()
+        .Produces<string>(400);
     }
 }
