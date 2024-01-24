@@ -11,9 +11,10 @@ public class RatingEndpoints
     {
         var routeGroup = app.MapGroup("/rating").RequireAuthorization();
 
-        routeGroup.MapGet("/all", async ([FromServices] IMediator mediator, [FromBody] Pagination pagination) =>
+        routeGroup.MapGet("/all", async ([FromServices] IMediator mediator, 
+            [FromQuery] int startIndex, [FromQuery] int pageSize) =>
         {
-            var query = new RatingQuery() {PageSize = pagination.PageSize, StartIndex = pagination.StartIndex};
+            var query = new RatingQuery() {PageSize = pageSize, StartIndex = startIndex};
             var result = await mediator.Send(query);
             return result.Match(Results.Ok, Results.BadRequest);
         });
