@@ -1,0 +1,24 @@
+﻿services:
+  examserver:
+    image: exam_server
+    container_name: exam_server
+    build:
+      context: .
+      dockerfile: ExamServer/Dockerfile
+    ports:
+      - "8000:80"
+    depends_on:
+      - dotnet_postgres
+    environment:
+      ConnectionStrings__DefaultConnection : Server=dotnet_postgres;Port=5432;Database=dotnet_postgres_db;User Id=superCoolUserName;Password=superCoolUserPassword138;
+    
+  dotnet_postgres:
+    image: postgres:alpine
+    container_name: dotnet_postgres
+    restart: always
+    environment:
+      POSTGRES_DB : dotnet_postgres_db
+      POSTGRES_USER : superCoolUserName
+      POSTGRES_PASSWORD : superCoolUserPassword138
+    ports:
+      - '5450:5432'
